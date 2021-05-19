@@ -24,10 +24,10 @@ public class Monster : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         
-        if(collision.tag=="Platform")
+        if(collision.tag=="Wall")
         {
-            Debug.Log("Trigger");
-            transform.position += new Vector3(0,0.1f,0);
+            Debug.Log("trigger");
+            speed *= -1;
         }
     }
 }

@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Platform
-  - Attack
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -13,7 +13,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Platform
   - 
   - 
   - 
