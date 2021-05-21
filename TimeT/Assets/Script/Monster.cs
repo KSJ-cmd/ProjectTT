@@ -24,6 +24,7 @@ public class Monster : MonoBehaviour
     void Update()
     {
 
+        MonsterRigidbody.velocity = new Vector2(speed, 0);
         reversetime += Time.deltaTime;
 
         if (isCamera)
@@ -33,7 +34,6 @@ public class Monster : MonoBehaviour
         }
         else if(reversetime>1)
         {
-            MonsterRigidbody.velocity = new Vector2(speed, 0);
             speed *= -1;
             reversetime = 0f;
         }
@@ -66,10 +66,9 @@ public class Monster : MonoBehaviour
     {
         MonsterRigidbody.velocity = new Vector2(0, 0);
         yield return new WaitForSeconds(1);
-        MonsterRigidbody.velocity = new Vector2(speed * 2, 0);
-        yield return new WaitForSeconds(1);
+        MonsterRigidbody.AddForce(new Vector2(speed*10,0),ForceMode2D.Impulse);
+        yield return new WaitForSeconds(3);
 
-        MonsterRigidbody.velocity = new Vector2(speed, 0);
     }
     
 }
