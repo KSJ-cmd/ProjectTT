@@ -5,8 +5,12 @@ TagManager:
   serializedVersion: 2
   tags:
   - Platform
+<<<<<<< HEAD
   - Attack
   - Monster
+=======
+  - Wall
+>>>>>>> Monster
   layers:
   - Default
   - TransparentFX

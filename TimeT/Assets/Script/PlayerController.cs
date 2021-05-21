@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+<<<<<<< HEAD
     public float playerJumpSpeed;
     public float playerMoveSpeed;
     public bool onJump;
@@ -26,6 +27,12 @@ public class PlayerController : MonoBehaviour
     Animator anim;
     BoxCollider2D Boxcollider;
     AudioSource audioSource;
+=======
+
+    public Rigidbody2D Rigidbody2D;
+    public float playerJumpSpeed = 500;
+    public float playerMoveSpeed = 5;
+>>>>>>> Monster
 
     // Start is called before the first frame update
     private void Awake()
@@ -56,6 +63,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
+<<<<<<< HEAD
         Sit();
         Attack();
         SitUp();
@@ -73,10 +81,27 @@ public class PlayerController : MonoBehaviour
             rid.AddForce(vector2);
             onJump = true;
         }
+=======
+        if (Input.GetButtonDown("Jump"))
+        {
+            Jump();
+        }
+        if (Input.GetButtonDown("Horizontal"))
+        {
+            Move();
+        }
+    }
+    void Jump()
+    {
+        Vector2 vector2 = new Vector2(0, playerJumpSpeed);
+        Rigidbody2D.transform.Translate(vector2);
+        Debug.Log("Jump");
+>>>>>>> Monster
     }
     void Move()
     {
         float h = Input.GetAxis("Horizontal");
+<<<<<<< HEAD
         if (h > 0)
         {
             transform.localScale = new Vector3(-1, 1, 1);
@@ -246,5 +271,10 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             spriteRenderer.color = new Color(1, 1, 1, 1); ;
         }
+=======
+        Vector2 vector2 = new Vector2(h*playerMoveSpeed,0);
+        transform.Translate(vector2); 
+        Debug.Log("Move");
+>>>>>>> Monster
     }
 }
