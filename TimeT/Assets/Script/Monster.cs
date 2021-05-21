@@ -29,6 +29,11 @@ public class Monster : MonoBehaviour
             Debug.Log("Trigger");
             transform.position += new Vector3(0,0.1f,0);
         }
+        if (collision.gameObject.CompareTag("Attack"))
+        {
+            gameObject.SetActive(false);
+        }
+
     }
 }
 

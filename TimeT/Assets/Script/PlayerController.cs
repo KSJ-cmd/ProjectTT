@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
     }
     void Jump()
     {
-        if (Input.GetButton("Jump") && !onSit && !onJump)
+        if (Input.GetButton("Jump") && !onSit && !onJump && !isHurt && !isHurtknockback)
         {
             Vector2 vector2 = new Vector2(0, playerJumpSpeed);
             rid.AddForce(vector2);
@@ -161,6 +161,7 @@ public class PlayerController : MonoBehaviour
             onJump = false;
             Debug.Log("JUMPFALSE");
         }
+        
         if (collision.gameObject.CompareTag("Monster"))
         {
             onJump = false;
@@ -171,7 +172,15 @@ public class PlayerController : MonoBehaviour
 
         }
     }
-    
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Monster"))
+        {
+            collision.gameObject.SetActive(false);
+            Destroy(collision.gameObject, 2f);
+        }
+    }
+
     void Hurt(Vector2 pos)
     {
         isHurt = true;
