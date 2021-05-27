@@ -20,6 +20,7 @@ public class MouseInput : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            
             MousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Collider2D overCollider2d = Physics2D.OverlapCircle(MousePosition, 0.01f, whatisPlatform);
             if (overCollider2d != null)
