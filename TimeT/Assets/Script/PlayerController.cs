@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public GameManager GameManager;
     public float playerJumpSpeed;
     public float playerMoveSpeed;
     public bool onJump;
@@ -13,10 +14,11 @@ public class PlayerController : MonoBehaviour
     public bool onSit;
     public bool isHurt;
     public bool isHurtknockback;
-    public float sitBoxColliderSizeX;
-    public float sitBoxColliderSizeY;
-    public float IdleBoxColliderSizeX;
-    public float IdleBoxColliderSizeY;
+
+    private float sitBoxColliderSizeX = 2f;
+    private float sitBoxColliderSizeY = 2.3f;
+    private float IdleBoxColliderSizeX;
+    private float IdleBoxColliderSizeY;
     public float knockBackPower;
     public int HP = 3;
 
@@ -30,6 +32,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
+        
         rid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         Boxcollider = GetComponent<BoxCollider2D>();
@@ -37,6 +40,7 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
+        //앉기 박스콜라이더 변경을 위한 값
         IdleBoxColliderSizeX = transform.GetComponent<BoxCollider2D>().size.x;
         IdleBoxColliderSizeY = transform.GetComponent<BoxCollider2D>().size.y;
 
@@ -55,46 +59,54 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        Jump();
         Sit();
         Attack();
         SitUp();
+        checkPlatform(); 
+
+
+        //MousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
     }
     private void FixedUpdate()
     {
-        Jump();
         Move();
     }
     void Jump()
     {
-        if (Input.GetButton("Jump") && !onSit && !onJump)
+        if (Input.GetButtonDown("Jump") && !onSit && !onJump)
         {
-            Vector2 vector2 = new Vector2(0, playerJumpSpeed);
-            rid.AddForce(vector2);
+            //Vector2 vector2 = new Vector2(0, playerJumpSpeed);
+            rid.AddForce(Vector2.up * playerJumpSpeed, ForceMode2D.Impulse);
             onJump = true;
         }
     }
     void Move()
     {
-        float h = Input.GetAxis("Horizontal");
+        //방향 전환 flip
+        float h = Input.GetAxisRaw("Horizontal");
         if (h > 0)
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+            spriteRenderer.flipX = true;
             onWalk = true;
         }
         else if (h == 0)
         {
             onWalk = false;
+            
         }
         else
         {
-            transform.localScale = new Vector3(1, 1, 1);
+            spriteRenderer.flipX = false;
             onWalk = true;
         }
+        //앉기상태X   물리력X    좌우이동 
         if (!onSit)
         {
             Vector2 vector2 = new Vector2(h * playerMoveSpeed, rid.velocity.y);
             rid.velocity = vector2;
+            //rid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
         }
     }
     void Attack() {
@@ -103,6 +115,14 @@ public class PlayerController : MonoBehaviour
             onAttack = true;
             GameObject attack = transform.Find("Attack").gameObject;
             attack.SetActive(true);
+            if (spriteRenderer.flipX)
+            {
+                attack.GetComponent<SpriteRenderer>().flipX = true;
+            }
+            else
+            {
+                attack.GetComponent<SpriteRenderer>().flipX = false;
+            }
             StartCoroutine(attackDelay());
         }
     }
@@ -117,6 +137,8 @@ public class PlayerController : MonoBehaviour
                     Vector2 vector21 = new Vector2(transform.localPosition.x, transform.localPosition.y-1);
                     transform.position = vector21;
                 }
+                Vector2 vector22 = new Vector2(rid.velocity.normalized.x * 0.1f, rid.velocity.y);
+                rid.velocity = vector22;
                 onWalk = false;
                 onSit = true;
                 rid.GetComponent<Animator>().SetBool("Sit", true);
@@ -154,24 +176,57 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void checkPlatform()
+    {
+        if (rid.velocity.y <= 0)
+        {
+            RaycastHit2D rayHit = Physics2D.Raycast(rid.position, Vector3.down, 4, LayerMask.GetMask("Platform"));
+            if (rayHit.collider != null)
+            {
+                if (rayHit.distance < 0.4f)
+                {
+                    
+                    onJump = true;
+                }
+            }
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Platform"))
         {
             onJump = false;
-            Debug.Log("JUMPFALSE");
+            //Debug.Log("JUMPFALSE");
         }
         if (collision.gameObject.CompareTag("Monster"))
         {
             onJump = false;
 
+
+
             Hurt(collision.transform.position);
 
-            //HP -= 1;
+            
 
         }
     }
-    
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Item")
+        {
+            //
+            GameManager.stagePoint += 100;
+
+            collision.gameObject.SetActive(false);
+        }
+        else if (collision.gameObject.tag == "finish")
+        {
+            //다음 스테이지
+        }
+    }
+
     void Hurt(Vector2 pos)
     {
         isHurt = true;
@@ -239,3 +294,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 }
+
+//레이캐스트 블록파괴 Fail
+//RaycastHit2D rayHit = Physics2D.Raycast(rid.position, Vector3.down, 4, LayerMask.GetMask("Platform"));
+//Vector3 MousePosition = rayHit.transform.position;
+//Collider2D overCollider2d = Physics2D.OverlapCircle(MousePosition, 0.01f, LayerMask.GetMask("Platform"));
+//if (overCollider2d != null)
+//{
+//    overCollider2d.transform.GetComponent<Bricks>().MakeDot(MousePosition);
+//}
+//Debug.Log(MousePosition);

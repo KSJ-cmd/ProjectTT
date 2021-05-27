@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     public Image[] UIhealth;
     public PlayerController player;
 
+    public int totalPoint;
+    public int stagePoint;
+
+
     // Start is called before the first frame update
     void Start()
     {
